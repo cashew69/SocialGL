@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialGL - WebGL Social Feed</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">SocialGL</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="feed">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Feed
+                    </button>
+                    <button class="nav-btn" data-view="create">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        Create
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Feed View -->
+            <div class="view feed-view active" id="feedView">
+                <div class="container">
+                    <div id="feed" class="feed">
+                        <!-- Posts will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create View -->
+            <div class="view create-view" id="createView">
+                <div class="container">
+                    <div class="create-card">
+                        <h2>Create WebGL Post</h2>
+                        <form id="createForm">
+                            <div class="form-group">
+                                <label for="postCaption">Caption</label>
+                                <textarea id="postCaption" rows="3" placeholder="What's on your mind?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Select WebGL Scene</label>
+                                <div class="scene-selector">
+                                    <button type="button" class="scene-btn active" data-scene="cube">
+                                        <span class="scene-icon">🎲</span>
+                                        Rotating Cube
+                                    </button>
+                                    <button type="button" class="scene-btn" data-scene="sphere">
+                                        <span class="scene-icon">🌐</span>
+                                        Glowing Sphere
+                                    </button>
+                                    <button type="button" class="scene-btn" data-scene="particles">
+                                        <span class="scene-icon">✨</span>
+                                        Particles
+                                    </button>
+                                    <button type="button" class="scene-btn" data-scene="wave">
+                                        <span class="scene-icon">🌊</span>
+                                        Wave Grid
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Preview</label>
+                                <div class="preview-container">
+                                    <canvas id="previewCanvas" width="600" height="400"></canvas>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Post to Feed</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="webgl-renderer.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
