@@ -14,6 +14,37 @@ class WebGLRenderer {
         this.animationId = null;
         this.startTime = Date.now();
         this.scene = null;
+        this.contextLost = false;
+        this.sceneData = null; // Store scene data for context restoration
+
+        // Add WebGL context loss/restore handlers
+        this.canvas.addEventListener('webglcontextlost', (e) => this.handleContextLost(e), false);
+        this.canvas.addEventListener('webglcontextrestored', (e) => this.handleContextRestored(e), false);
+    }
+
+    handleContextLost(event) {
+        event.preventDefault(); // Prevent default to allow restoration
+        console.warn('WebGL context lost. Stopping render loop...');
+        this.contextLost = true;
+        this.stop();
+    }
+
+    handleContextRestored(event) {
+        console.log('WebGL context restored. Reinitializing scene...');
+        this.contextLost = false;
+
+        // Reinitialize the WebGL context
+        this.gl = this.canvas.getContext('webgl2');
+
+        if (!this.gl) {
+            console.error('Failed to restore WebGL context');
+            return;
+        }
+
+        // Restore the scene if we had one
+        if (this.scene && this.sceneData) {
+            this.initScene(this.scene);
+        }
     }
 
     // Initialize a scene
@@ -113,6 +144,13 @@ class WebGLRenderer {
             1, 2, 6,  1, 6, 5   // right
         ]);
 
+        // Store data for context restoration
+        this.sceneData = {
+            vertices: vertices,
+            colors: colors,
+            indices: indices
+        };
+
         this.vertexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, vertices, this.gl.STATIC_DRAW);
@@ -197,6 +235,13 @@ class WebGLRenderer {
         this.program = this.createProgram(vertexShader, fragmentShader);
 
         const sphere = this.createSphereGeometry(1.5, 32, 32);
+
+        // Store data for context restoration
+        this.sceneData = {
+            vertices: sphere.vertices,
+            normals: sphere.normals,
+            indices: sphere.indices
+        };
 
         this.vertexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -295,6 +340,13 @@ class WebGLRenderer {
             velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
         }
 
+        // Store data for context restoration
+        this.sceneData = {
+            positions: positions,
+            velocities: velocities,
+            count: count
+        };
+
         this.vertexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
@@ -370,6 +422,12 @@ class WebGLRenderer {
         this.program = this.createProgram(vertexShader, fragmentShader);
 
         const grid = this.createGridGeometry(40, 40, 3, 3);
+
+        // Store data for context restoration
+        this.sceneData = {
+            vertices: grid.vertices,
+            indices: grid.indices
+        };
 
         this.vertexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -540,6 +598,11 @@ class WebGLRenderer {
     // Start rendering loop
     start() {
         const render = () => {
+            // Don't render if context is lost
+            if (this.contextLost) {
+                return;
+            }
+
             if (this.renderFunc) {
                 this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
                 this.gl.clearColor(0, 0, 0, 1);
