@@ -4,7 +4,7 @@
 class WebGLRenderer {
     constructor(canvas) {
         this.canvas = canvas;
-        this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        this.gl = canvas.getContext('webgl2') ;
 
         if (!this.gl) {
             console.error('WebGL not supported');
