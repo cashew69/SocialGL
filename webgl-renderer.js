@@ -158,6 +158,7 @@ class WebGLRenderer {
     // Scene 2: Glowing Sphere
     initSphere() {
         const vertexShader = `
+            precision mediump float;
             attribute vec4 aPosition;
             attribute vec3 aNormal;
             uniform mat4 uMatrix;
